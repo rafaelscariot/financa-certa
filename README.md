@@ -1,2 +1,2 @@
 # financa-certa
-Mobile app to record profits and expenses to have a financial control.
+Mobile app to record expenses to have a monthly financial control.
