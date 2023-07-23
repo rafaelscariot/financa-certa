@@ -7,7 +7,7 @@ interface ViewExpensesScreenProps {
   navigation: any;
 }
 
-const Home: React.FC<ViewExpensesScreenProps> = ({ navigation }) => {
+const HomeScreen: React.FC<ViewExpensesScreenProps> = ({ navigation }) => {
   const [value, setValue] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("Importante");
@@ -16,6 +16,7 @@ const Home: React.FC<ViewExpensesScreenProps> = ({ navigation }) => {
 
   const handleSave = async () => {
     if (!value || !description || !category) {
+      setSuccessMessage("");
       setError("Preencha todos os campos antes de salvar");
       setTimeout(() => setError(""), 3000);
       return;
@@ -44,13 +45,14 @@ const Home: React.FC<ViewExpensesScreenProps> = ({ navigation }) => {
 
       setValue("");
       setDescription("");
-      setCategory("importante");
+      setCategory("Importante");
       setError("");
 
       setSuccessMessage("Despesa salva com sucesso");
       setTimeout(() => setSuccessMessage(""), 3000);
     } catch (error) {
       console.error(`Error saving expense: ${JSON.stringify(error)}`);
+      setSuccessMessage("");
       setError(`Erro ao salvar despesa: ${JSON.stringify(error)}`);
     }
   };
@@ -199,4 +201,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Home;
+export default HomeScreen;
