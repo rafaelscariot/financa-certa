@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Picker } from "@react-native-picker/picker";
+import Transaction from "../interfaces/transaction.interface";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { View, TextInput, StyleSheet, Text, Pressable } from "react-native";
 
@@ -9,27 +10,33 @@ interface ViewExpensesScreenProps {
 
 const HomeScreen: React.FC<ViewExpensesScreenProps> = ({ navigation }) => {
   const [value, setValue] = useState("");
+  const [error, setError] = useState("");
+  const [type, setType] = useState("Despesa");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("Importante");
-  const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
   const handleSave = async () => {
-    if (!value || !description || !category) {
+    // await AsyncStorage.clear();
+    // return;
+
+    if (!value || !description) {
       setSuccessMessage("");
       setError("Preencha todos os campos antes de salvar");
-      setTimeout(() => setError(""), 3000);
       return;
     }
 
-    const newExpense = JSON.stringify({
-      date: new Date().toLocaleDateString("pt-BR"),
+    const newTransaction: Transaction = {
+      type,
       value,
-      description,
       category,
-    });
+      description,
+      date: new Date(),
+    };
 
-    console.log(`New expense to be saved: ${newExpense}`);
+    console.log(
+      `New transaction to be saved: ${JSON.stringify(newTransaction)}`
+    );
 
     try {
       const keys = (await AsyncStorage.getAllKeys()) as unknown as string[];
@@ -41,19 +48,23 @@ const HomeScreen: React.FC<ViewExpensesScreenProps> = ({ navigation }) => {
       const lastKey = Number(keys[keys.length - 1]);
       const newKey = lastKey + 1;
 
-      await AsyncStorage.setItem(String(newKey), newExpense);
+      await AsyncStorage.setItem(
+        String(newKey),
+        JSON.stringify(newTransaction)
+      );
 
       setValue("");
       setDescription("");
       setCategory("Importante");
+      setType("Despesa");
       setError("");
 
-      setSuccessMessage("Despesa salva com sucesso");
+      setSuccessMessage("Movimentação salva com sucesso");
       setTimeout(() => setSuccessMessage(""), 3000);
     } catch (error) {
-      console.error(`Error saving expense: ${JSON.stringify(error)}`);
+      console.error(`Error saving transaction: ${JSON.stringify(error)}`);
       setSuccessMessage("");
-      setError(`Erro ao salvar despesa: ${JSON.stringify(error)}`);
+      setError(`Erro ao salvar movimentação: ${JSON.stringify(error)}`);
     }
   };
 
@@ -63,8 +74,8 @@ const HomeScreen: React.FC<ViewExpensesScreenProps> = ({ navigation }) => {
 
       <View style={styles.subtitleContainer}>
         <Text style={styles.subtitle}>
-          Registre seus gastos diários, análise suas despesas e tenha a finança
-          certa!
+          Registre seus gastos e ganhos diários, análise suas movimentações e
+          tenha a finança certa!
         </Text>
       </View>
 
@@ -84,14 +95,25 @@ const HomeScreen: React.FC<ViewExpensesScreenProps> = ({ navigation }) => {
       />
 
       <Picker
-        selectedValue={category}
-        onValueChange={(itemValue) => setCategory(itemValue)}
+        selectedValue={type}
+        onValueChange={(itemValue) => setType(itemValue)}
         style={styles.picker}
       >
-        <Picker.Item label="Importante" value="Importante" />
-        <Picker.Item label="Essencial" value="Essencial" />
-        <Picker.Item label="Supérfluo" value="Supérfluo" />
+        <Picker.Item label="Despesa" value="Despesa" />
+        <Picker.Item label="Ganho" value="Ganho" />
       </Picker>
+
+      {type === "Despesa" ? (
+        <Picker
+          selectedValue={category}
+          onValueChange={(itemValue) => setCategory(itemValue)}
+          style={styles.picker}
+        >
+          <Picker.Item label="Importante" value="Importante" />
+          <Picker.Item label="Essencial" value="Essencial" />
+          <Picker.Item label="Supérfluo" value="Supérfluo" />
+        </Picker>
+      ) : null}
 
       {successMessage ? (
         <View style={styles.successMessageContainer}>
@@ -110,10 +132,17 @@ const HomeScreen: React.FC<ViewExpensesScreenProps> = ({ navigation }) => {
       </Pressable>
 
       <Pressable
-        style={styles.viewExpensesButton}
+        style={styles.statementButton}
         onPress={() => navigation.navigate("Despesas")}
       >
-        <Text style={styles.viewExpensesButtonText}>Visualizar despesas</Text>
+        <Text style={styles.statementButtonText}>Analisar despesas</Text>
+      </Pressable>
+
+      <Pressable
+        style={styles.statementButton}
+        onPress={() => navigation.navigate("Ganhos")}
+      >
+        <Text style={styles.statementButtonText}>Analisar ganhos</Text>
       </Pressable>
     </View>
   );
@@ -132,14 +161,14 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   subtitleContainer: {
-    backgroundColor: "#f2f2f2",
+    backgroundColor: "#D3D3D3",
     padding: 10,
     borderRadius: 8,
     marginBottom: 16,
   },
   subtitle: {
     fontSize: 16,
-    marginBottom: 16,
+    marginBottom: 4,
     textAlign: "center",
   },
   input: {
@@ -187,14 +216,14 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 20,
   },
-  viewExpensesButton: {
+  statementButton: {
     width: "100%",
     backgroundColor: "black",
     padding: 10,
     borderRadius: 8,
     marginTop: 5,
   },
-  viewExpensesButtonText: {
+  statementButtonText: {
     color: "white",
     textAlign: "center",
     fontSize: 20,

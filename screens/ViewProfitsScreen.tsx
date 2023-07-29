@@ -4,45 +4,45 @@ import Transaction from "../interfaces/transaction.interface";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   View,
-  Text,
   StyleSheet,
+  Text,
   FlatList,
   TouchableOpacity,
 } from "react-native";
 
-const ViewExpensesScreen = () => {
-  const [expenses, setExpenses] = useState([]);
+const ViewProfitsScreen = () => {
+  const [profits, setProfits] = useState([]);
 
   useEffect(() => {
-    const getExpenses = async () => {
+    const getProfits = async () => {
       const keys = (await AsyncStorage.getAllKeys()) as unknown as string[];
 
-      let dbExpenses: Transaction[] = [];
+      let dbProfits: Transaction[] = [];
 
       keys.forEach(async (key) => {
-        const expense = JSON.parse((await AsyncStorage.getItem(key)) as string);
+        const profit = JSON.parse((await AsyncStorage.getItem(key)) as string);
 
-        if (expense?.type === "Despesa") {
-          dbExpenses.push({ ...expense, key });
+        if (profit?.type === "Ganho") {
+          dbProfits.push({ ...profit, key });
 
-          dbExpenses = dbExpenses.sort(
+          dbProfits = dbProfits.sort(
             (a: Transaction, b: Transaction) =>
               new Date(b.date).getTime() - new Date(a.date).getTime()
           );
 
           //@ts-ignore
-          setExpenses(dbExpenses);
+          setProfits(dbProfits);
         }
       });
     };
 
-    getExpenses();
+    getProfits();
   }, []);
 
   const onDeleteItem = async (item: Transaction) => {
     await AsyncStorage.removeItem(item.key as string);
-    const newExpenses = expenses.filter((e: Transaction) => e.key !== item.key);
-    setExpenses(newExpenses);
+    const newProfits = profits.filter((e: Transaction) => e.key !== item.key);
+    setProfits(newProfits);
   };
 
   //@ts-ignore
@@ -65,14 +65,14 @@ const ViewExpensesScreen = () => {
 
   return (
     <View style={styles.container}>
-      {expenses.length > 1 ? (
+      {profits.length > 1 ? (
         <FlatList
-          data={expenses}
+          data={profits}
           renderItem={renderItem}
           keyExtractor={(item) => item.date}
         />
       ) : (
-        <Text style={styles.emptyMessage}>Nada por aqui :)</Text>
+        <Text style={styles.emptyMessage}>Sem ganhos por enquanto</Text>
       )}
     </View>
   );
@@ -108,4 +108,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ViewExpensesScreen;
+export default ViewProfitsScreen;

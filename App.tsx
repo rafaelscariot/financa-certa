@@ -1,5 +1,6 @@
 import React from "react";
 import HomeScreen from "./screens/HomeScreen";
+import ViewProfitsScreen from "./screens/ViewProfitsScreen";
 import ViewExpensesScreen from "./screens/ViewExpensesScreen";
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
@@ -16,6 +17,7 @@ const App: React.FC = () => {
           options={{ headerShown: false }}
         />
         <Stack.Screen name="Despesas" component={ViewExpensesScreen} />
+        <Stack.Screen name="Ganhos" component={ViewProfitsScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
