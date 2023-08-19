@@ -17,9 +17,6 @@ const HomeScreen: React.FC<ViewExpensesScreenProps> = ({ navigation }) => {
   const [successMessage, setSuccessMessage] = useState("");
 
   const handleSave = async () => {
-    // await AsyncStorage.clear();
-    // return;
-
     if (!value || !description) {
       setSuccessMessage("");
       setError("Preencha todos os campos antes de salvar");
@@ -80,24 +77,24 @@ const HomeScreen: React.FC<ViewExpensesScreenProps> = ({ navigation }) => {
       </View>
 
       <TextInput
-        style={styles.input}
-        placeholder="Informe o valor"
         value={value}
-        onChangeText={setValue}
+        style={styles.input}
         keyboardType="numeric"
+        onChangeText={setValue}
+        placeholder="Informe o valor"
       />
 
       <TextInput
-        style={styles.input}
-        placeholder="Informe a descrição"
         value={description}
+        style={styles.input}
         onChangeText={setDescription}
+        placeholder="Informe a descrição"
       />
 
       <Picker
         selectedValue={type}
-        onValueChange={(itemValue) => setType(itemValue)}
         style={styles.picker}
+        onValueChange={(itemValue) => setType(itemValue)}
       >
         <Picker.Item label="Despesa" value="Despesa" />
         <Picker.Item label="Ganho" value="Ganho" />

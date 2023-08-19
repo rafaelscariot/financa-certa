@@ -9,9 +9,12 @@ import {
   FlatList,
   TouchableOpacity,
 } from "react-native";
+import { Picker } from "@react-native-picker/picker";
 
 const ViewExpensesScreen = () => {
   const [expenses, setExpenses] = useState([]);
+  const [hasExpenses, setHasExpenses] = useState(false);
+  const [month, setMonth] = useState("");
 
   useEffect(() => {
     const getExpenses = async () => {
@@ -32,6 +35,7 @@ const ViewExpensesScreen = () => {
 
           //@ts-ignore
           setExpenses(dbExpenses);
+          setHasExpenses(true);
         }
       });
     };
@@ -65,7 +69,17 @@ const ViewExpensesScreen = () => {
 
   return (
     <View style={styles.container}>
-      {expenses.length > 1 ? (
+      <Picker
+        selectedValue={"Setembro"}
+        style={styles.picker}
+        // TODO continuar daque
+        onValueChange={(itemValue) => setMonth(itemValue)}
+      >
+        <Picker.Item label="Agosto" value="Agosto" />
+        <Picker.Item label="Setembro" value="Setembro" />
+      </Picker>
+
+      {hasExpenses ? (
         <FlatList
           data={expenses}
           renderItem={renderItem}
@@ -90,6 +104,7 @@ const styles = StyleSheet.create({
     padding: 20,
     marginVertical: 8,
     borderRadius: 8,
+    width: 300,
   },
   itemTitles: {
     fontSize: 18,
@@ -105,6 +120,10 @@ const styles = StyleSheet.create({
   },
   emptyMessage: {
     fontSize: 22,
+  },
+  picker: {
+    width: "100%",
+    height: 40,
   },
 });
 

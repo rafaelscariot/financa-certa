@@ -12,6 +12,7 @@ import {
 
 const ViewProfitsScreen = () => {
   const [profits, setProfits] = useState([]);
+  const [hasProfits, setHasProfits] = useState(false);
 
   useEffect(() => {
     const getProfits = async () => {
@@ -32,6 +33,7 @@ const ViewProfitsScreen = () => {
 
           //@ts-ignore
           setProfits(dbProfits);
+          setHasProfits(true);
         }
       });
     };
@@ -65,7 +67,7 @@ const ViewProfitsScreen = () => {
 
   return (
     <View style={styles.container}>
-      {profits.length > 1 ? (
+      {hasProfits ? (
         <FlatList
           data={profits}
           renderItem={renderItem}
@@ -90,6 +92,7 @@ const styles = StyleSheet.create({
     padding: 20,
     marginVertical: 8,
     borderRadius: 8,
+    width: 300,
   },
   itemTitles: {
     fontSize: 18,
