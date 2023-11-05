@@ -36,7 +36,7 @@ const HomeScreen: React.FC<ViewExpensesScreenProps> = ({ navigation }) => {
     );
 
     try {
-      const keys = (await AsyncStorage.getAllKeys()) as unknown as string[];
+      const keys = (await AsyncStorage.getAllKeys()) as string[];
 
       if (keys.length === 0) {
         keys.push("0");
